@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>1828 Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+[hidden]{display:none!important}
+/* Layout: one centered column, 880px max; dark navy ground carrying the 1828 gold/teal/violet point colors */
+:root{
+  --bg:#10183a; --panel:#18234d; --panel-2:#202c5c; --track:#26336a; --line:#2d3b74;
+  --fg:#f3f4fa; --muted:#aeb6d6; --gold:#f5c95c; --teal:#5fc2b2; --violet:#a98bf5; --red:#f07474;
+  --silver:#d3d9ea; --bronze:#e3a877; --ink:#10183a;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;padding:0 16px}
+main{max-width:880px;margin:0 auto;padding-block:32px 64px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
+h2{font-size:1.5rem;font-weight:800}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.sec{display:flex;flex-direction:column;gap:16px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+
+/* header */
+header{display:flex;flex-direction:column;gap:8px}
+header h1{font-size:clamp(2.6rem,9vw,4.4rem);font-weight:800;color:var(--gold);letter-spacing:-.01em}
+header h1 .star{font-size:.6em;vertical-align:.25em}
+
+/* find me */
+.finder{background:var(--panel);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px}
+.finder label{font-weight:600}
+.select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);min-height:48px}
+.me{display:grid;grid-template-columns:auto 1fr;gap:20px 28px;align-items:center}
+.me-rank{font-family:var(--display);font-weight:800;font-size:4.2rem;line-height:1;color:var(--gold)}
+.me-rank small{font-size:.35em;color:var(--muted);font-weight:600;display:block;margin-top:6px;font-family:var(--body)}
+.me-stats{display:flex;flex-direction:column;gap:6px;min-width:0}
+.me-pts{font-family:var(--display);font-size:2rem;font-weight:800}
+.chip{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--track);color:var(--fg);vertical-align:middle;margin-left:8px}
+.chip.gold{background:var(--gold);color:var(--ink)}
+.hist{grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:6px}
+.hist-row{display:flex;justify-content:space-between;gap:12px;font-size:.95rem}
+.hist-row .d{color:var(--muted);margin-right:10px}
+.pos{color:var(--teal);font-weight:700}.neg{color:var(--red);font-weight:700}
+.empty-note{color:var(--muted);font-size:.95rem}
+
+/* podium */
+.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:end}
+.step{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;min-width:0}
+.names{font-weight:700;display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere}
+.names .tie{font-size:.8rem;font-weight:700;color:var(--bronze);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.block{width:100%;border-radius:16px 16px 6px 6px;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:14px 8px;gap:2px}
+.block .place{font-family:var(--display);font-weight:800;font-size:3rem;line-height:1}
+.block .p{font-weight:700;font-size:1.1rem}
+.b1{background:var(--gold);height:200px}.b2{background:var(--silver);height:160px}.b3{background:var(--bronze);height:130px}
+.crown{color:var(--gold);width:40px;height:30px}
+.step.first{order:2}.step.second{order:1}.step.third{order:3}
+
+/* standings */
+.board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}
+.row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid transparent;border-radius:14px;padding:8px 14px 8px 8px;min-height:48px;cursor:pointer;text-align:left;width:100%}
+.row:hover{border-color:var(--line)}
+.row.sel{border-color:var(--gold);background:var(--panel-2)}
+.badge{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;background:var(--track)}
+.badge.top{background:var(--gold);color:var(--ink)}
+.row .n{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .p{font-weight:700;color:var(--gold)}
+
+/* earn */
+.earn{background:var(--panel);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.bar-row{display:grid;grid-template-columns:minmax(0,11rem) 1fr;gap:16px;align-items:center}
+.bar-row .lbl{font-weight:600}
+.track{position:relative;height:22px;border-radius:8px;background:var(--track)}
+.fill{height:100%;border-radius:8px}
+.dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--fg);border:3px solid;display:grid;place-items:center;font-size:.8rem;font-weight:700;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;padding-top:8px;font-weight:600;font-size:.9rem}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend i{width:16px;height:16px;border-radius:4px;display:inline-block}
+
+@media (max-width:640px){
+  .board{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr}
+  .picks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bar-row{grid-template-columns:1fr;gap:6px}
+  .me-rank{font-size:3.2rem}
+  .block .place{font-size:2.2rem}
+  .b1{height:160px}.b2{height:130px}.b3{height:108px}
+}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .4s ease}}
+</style>
+</head>
+<body>
+<main id="app"><p class="muted">Loading standings…</p></main>
+<script>
+/* ============================================================
+   EDIT HERE: event point values shown in "How to earn points".
+   cat: m = Mandatory, t = Tours, o = Other, p = Penalty
+   (Standings come from standings.txt, not from this file.)
+   ============================================================ */
+const SEASON = 'Fall 2026';
+const EVENTS = [
+  { name: 'See-Augusta',       pts: 15, cat: 'm' },
+  { name: 'Training',          pts: 10, cat: 'm' },
+  { name: 'Graduation',        pts: 10, cat: 'm' },
+  { name: 'Pre-See Augusta',   pts: 8,  cat: 'm' },
+  { name: 'Meeting',           pts: 7,  cat: 'm' },
+  { name: 'Saturday Visit',    pts: 7,  cat: 't' },
+  { name: 'Campus Tour',       pts: 5,  cat: 't' },
+  { name: 'Social Media Help', pts: 3,  cat: 'o' },
+  { name: 'Office Help',       pts: 3,  cat: 'o' },
+  { name: 'No-Show',           pts: -5, cat: 'p' },
+];
+
+(function(){
+const CAT = {m:['Mandatory','var(--gold)'],t:['Tours','var(--teal)'],o:['Other','var(--violet)'],p:['Penalty','var(--red)']};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sgn = n => n > 0 ? '+' + n : n < 0 ? '−' + Math.abs(n) : '0';
+const toNum = t => { t = String(t || '').trim().replace('−','-').replace(/,/g,'').replace(/\.$/,''); return /^-?\d+(\.\d+)?$/.test(t) ? Number(t) : null; };
+// "Oluwatobiloba (Tobi) Clinton" -> "Tobi Clinton"
+const display = n => { const m = n.match(/^(.*?)\s*\(([^)]+)\)\s*(.*)$/); return m ? (m[2] + ' ' + m[3]).trim() : n.trim(); };
+
+let people = [], meKey = null, updated = '';
+try { meKey = localStorage.getItem('me1828'); } catch(e) {}
+
+function parse(text){
+  const out = [];
+  text.replace(/\r/g,'').split('\n').forEach(line => {
+    if (!line.trim() || line.trim().startsWith('#')) return;
+    let cells = line.split('\t'); if (cells.length < 2) cells = line.split(/\s{2,}/);
+    cells = cells.map(c => c.trim());
+    const ni = cells.findIndex(c => /[a-z]/i.test(c) && toNum(c) === null);
+    if (ni < 0 || /^(name|ambassador|rank|total|points|pts)\b/i.test(cells[ni])) return;
+    const nums = cells.slice(ni + 1).map(toNum).filter(v => v !== null);
+    if (!nums.length) return;
+    const name = display(cells[ni]);
+    out.push({ key: name.toLowerCase(), name, pts: Math.round(nums[0]), tours: nums.length > 1 ? Math.round(nums[1]) : null });
+  });
+  out.sort((a,b) => b.pts - a.pts || a.name.localeCompare(b.name));
+  let r = 0;
+  out.forEach((a,i) => { if (i === 0 || a.pts !== out[i-1].pts) r = i + 1; a.rank = r; });
+  return out;
+}
+
+function render(){
+  const st = people;
+  const tiers = [...new Set(st.map(a => a.pts))];
+  let h = '<header><div class="eyebrow">1828 Ambassadors · ' + esc(SEASON) + '</div><h1><span class="star">★</span> Leaderboard <span class="star">★</span></h1><div class="muted">' + st.length + ' ambassadors' + (updated ? ' · updated ' + esc(updated) : '') + '</div></header>';
+
+  const me = st.find(a => a.key === meKey);
+  h += '<section class="finder" aria-labelledby="fm"><h2 id="fm">Where do I stand?</h2><div class="field"><label for="meSel">Pick your name</label><select id="meSel" class="select"><option value="">Choose your name…</option>';
+  [...st].sort((a,b)=>a.name.localeCompare(b.name)).forEach(a => h += '<option value="' + esc(a.key) + '"' + (a.key === meKey ? ' selected' : '') + '>' + esc(a.name) + '</option>');
+  h += '</select></div>';
+  if (me) {
+    const tied = st.filter(a => a.pts === me.pts).length, ti = tiers.indexOf(me.pts), lines = [];
+    if (me.tours !== null) lines.push(me.tours + ' tour' + (me.tours === 1 ? '' : 's') + ' given');
+    if (ti === 0) lines.push(tied > 1 ? 'Tied for first place.' : 'You’re in first place.');
+    else {
+      const above = tiers[ti-1], who = st.filter(a => a.pts === above);
+      lines.push('<b class="num">' + (above - me.pts) + ' pts</b> behind #' + who[0].rank + ' (' + esc(who.length > 1 ? who.length + '-way tie' : who[0].name) + ')');
+      if (ti > 2) lines.push('<b class="num">' + (tiers[2] - me.pts) + ' pts</b> to tie for the podium');
+    }
+    h += '<div class="me"><div class="me-rank num">#' + me.rank + '<small>of ' + st.length + '</small></div><div class="me-stats"><div class="me-pts num">' + me.pts + ' pts' + (tied > 1 ? '<span class="chip">' + tied + '-way tie</span>' : '') + (ti <= 2 ? '<span class="chip gold">Podium</span>' : '') + '</div>';
+    lines.forEach(l => h += '<div class="muted">' + l + '</div>');
+    h += '</div></div>';
+  } else h += '<p class="empty-note">Choose your name to see your rank, your points, and how close you are to the next spot.</p>';
+  h += '</section>';
+
+  const crown = '<svg class="crown" viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M4 24 L6 8 L14 16 L20 4 L26 16 L34 8 L36 24 Z" fill="currentColor"/></svg>';
+  h += '<section class="sec" aria-labelledby="pd"><div class="sec-head"><h2 id="pd">Top three</h2></div><div class="podium">';
+  [['first','b1','1'],['second','b2','2'],['third','b3','3']].forEach((p,i) => {
+    const pts = tiers[i], ppl = pts === undefined ? [] : st.filter(a => a.pts === pts);
+    h += '<div class="step ' + p[0] + '">' + (i === 0 ? crown : '') + '<div class="names">' + (ppl.length > 1 ? '<span class="tie">' + ppl.length + '-way tie</span>' : '') + ppl.map(a => '<span>' + esc(a.name) + '</span>').join('') + '</div><div class="block ' + p[1] + '"><span class="place">' + p[2] + '</span>' + (pts !== undefined ? '<span class="p num">' + pts + ' pts</span>' : '') + (ppl.length === 1 && ppl[0].tours !== null ? '<span class="num" style="font-size:.9rem">' + ppl[0].tours + ' tour' + (ppl[0].tours === 1 ? '' : 's') + '</span>' : '') + '</div></div>';
+  });
+  h += '</div></section>';
+
+  h += '<section class="sec" aria-labelledby="sd"><div class="sec-head"><h2 id="sd">Full standings</h2><span class="muted">Tap your name to see where you stand</span></div><div class="board">';
+  st.forEach(a => h += '<button type="button" class="row' + (a.key === meKey ? ' sel' : '') + '" data-me="' + esc(a.key) + '"><span class="badge num' + (tiers.indexOf(a.pts) < 3 ? ' top' : '') + '">' + a.rank + '</span><span class="n">' + esc(a.name) + '</span><span class="p num">' + a.pts + ' pts</span></button>');
+  h += '</div></section>';
+
+  const max = Math.max(...EVENTS.map(e => Math.abs(e.pts)), 1);
+  h += '<section class="earn" aria-labelledby="ep"><h2 id="ep">How to earn points</h2>';
+  EVENTS.forEach(e => {
+    const c = (CAT[e.cat] || CAT.o)[1], w = Math.max(6, Math.abs(e.pts) / max * 94);
+    h += '<div class="bar-row"><span class="lbl">' + esc(e.name) + '</span><div class="track"><div class="fill" style="width:' + w + '%;background:' + c + '"></div><span class="dot num" style="left:' + w + '%;border-color:' + c + '">' + sgn(e.pts) + '</span></div></div>';
+  });
+  h += '<div class="legend">' + Object.values(CAT).map(c => '<span><i style="background:' + c[1] + '"></i>' + c[0] + '</span>').join('') + '</div></section>';
+
+  const y = window.scrollY;
+  document.getElementById('app').innerHTML = h;
+  window.scrollTo(0, y);
+}
+
+function pick(k){ meKey = k || null; try { k ? localStorage.setItem('me1828', k) : localStorage.removeItem('me1828'); } catch(e) {} render(); }
+document.addEventListener('change', e => { if (e.target.id === 'meSel') pick(e.target.value); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('button[data-me]'); if (!b) return;
+  pick(b.dataset.me); document.getElementById('fm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+fetch('standings.txt', { cache: 'no-cache' })
+  .then(r => { if (!r.ok) throw new Error(r.status); const lm = r.headers.get('last-modified'); if (lm) updated = new Date(lm).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); return r.text(); })
+  .then(t => { people = parse(t); render(); })
+  .catch(() => { document.getElementById('app').innerHTML = '<p class="muted">Couldn’t load the standings. If you opened this file straight from your computer, preview it with the Live Server extension in VS Code, or view the live GitHub Pages link instead.</p>'; });
+})();
+</script>
+</body>
+</html>
